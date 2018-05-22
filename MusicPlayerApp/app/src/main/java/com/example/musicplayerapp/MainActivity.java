@@ -4,19 +4,21 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
-
-import com.example.musicplayerapp.ui.main.MainFragment;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
 
     private static final int EXTERNAL_STORAGE_PERMISSION_REQUEST = 1;
     List<Song> songList;
@@ -40,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
             if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                 requestStoragePermission();
+            } else {
+                setRecyclerView();
+                Toast.makeText(this, "Permission all went through!", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -74,9 +79,17 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.exit_app, Toast.LENGTH_SHORT).show();
                 finish();
             } else {
-                songList = MediaHelper.getMusicFromStorage(this);
+                setRecyclerView();
                 Toast.makeText(this, "Permission all went through!", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void setRecyclerView() {
+        recyclerView = findViewById(R.id.recycler_view);
+        songList =  MediaHelper.getMusicFromStorage(this);
+        SongListAdapter adapter = new SongListAdapter(this, songList);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 }

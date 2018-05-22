@@ -5,4 +5,5 @@
     <string name="allow">Allow</string>
     <string name="deny">Deny</string>
     <string name="exit_app">Exiting App...</string>
+    <string name="not_available">Not Avalible</string>
 </resources>
