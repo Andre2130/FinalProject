@@ -1,4 +1,4 @@
-package com.example.musicplayerapp;
+package com.example.musicplayerapp.data;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.musicplayerapp.R;
 
 import java.util.List;
 
@@ -29,10 +31,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.ViewHo
         }
     }
 
-    public SongListAdapter(Context c, List<Song> songs){
+    public SongListAdapter(Context c){
         this.inflater = LayoutInflater.from(c);
         this.c = c;
-        this.songList = songs;
     }
 
     @Override
@@ -58,6 +59,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.ViewHo
 
     public void setSongList(List<Song> newSongList){
         this.songList = newSongList;
+        notifyDataSetChanged();
     }
 
     @Override

@@ -1,11 +1,14 @@
 package com.example.musicplayerapp;
 
 import android.Manifest;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -14,14 +17,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.example.musicplayerapp.data.MyAppDatabase;
+import com.example.musicplayerapp.data.Song;
+import com.example.musicplayerapp.data.SongListAdapter;
+import com.example.musicplayerapp.data.SongViewModel;
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private SongListAdapter adapter;
     private RecyclerView recyclerView;
+
+    private SongViewModel songViewModel;
 
     private static final int EXTERNAL_STORAGE_PERMISSION_REQUEST = 1;
     List<Song> songList;
+    public static MyAppDatabase myAppDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
                     != PackageManager.PERMISSION_GRANTED) {
                 requestStoragePermission();
             } else {
-                setRecyclerView();
                 Toast.makeText(this, "Permission all went through!", Toast.LENGTH_LONG).show();
             }
         }
@@ -79,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.exit_app, Toast.LENGTH_SHORT).show();
                 finish();
             } else {
-                setRecyclerView();
                 Toast.makeText(this, "Permission all went through!", Toast.LENGTH_LONG).show();
             }
         }
@@ -88,8 +98,19 @@ public class MainActivity extends AppCompatActivity {
     private void setRecyclerView() {
         recyclerView = findViewById(R.id.recycler_view);
         songList =  MediaHelper.getMusicFromStorage(this);
-        SongListAdapter adapter = new SongListAdapter(this, songList);
+        adapter = new SongListAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void setSongData(){
+        songViewModel = ViewModelProviders.of(this).get(SongViewModel.class);
+
+        songViewModel.getAllSongs().observe(this, new Observer<List<Song>>() {
+            @Override
+            public void onChanged(@Nullable List<Song> songs) {
+                adapter.setSongList(songs);
+            }
+        });
     }
 }

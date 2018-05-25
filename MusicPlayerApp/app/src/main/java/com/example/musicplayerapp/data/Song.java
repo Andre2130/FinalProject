@@ -1,17 +1,39 @@
-package com.example.musicplayerapp;
+package com.example.musicplayerapp.data;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+@Entity(tableName = "songs")
 public class Song implements Parcelable {
+
+
+    @PrimaryKey(autoGenerate = true)
     private long id;
+
+    @ColumnInfo(name = "song_id")
+    private long _id;
+
+    @ColumnInfo(name = "song_title")
     private String title;
+
+    @ColumnInfo(name = "song_artist")
     private String artist;
 
-    public Song(long id, String title, String artist) {
-        this.id = id;
+    public Song(long _id, String title, String artist) {
+        this._id = _id;
         this.title = title;
         this.artist = artist;
+    }
+
+    public long get_id() {
+        return _id;
+    }
+
+    public void set_id(long _id) {
+        this._id = _id;
     }
 
     public long getId() {
@@ -44,6 +66,7 @@ public class Song implements Parcelable {
     }
 
     protected Song(Parcel in) {
+        _id = in.readLong();
         id = in.readLong();
         title = in.readString();
         artist = in.readString();
@@ -51,6 +74,7 @@ public class Song implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(_id);
         parcel.writeLong(id);
         parcel.writeString(title);
         parcel.writeString(artist);
